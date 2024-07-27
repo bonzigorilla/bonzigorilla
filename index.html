@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bonzi Gorilla</title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://example.com/favicon.png"> <!-- Replace with your favicon link -->
-
     <style>
         body {
             margin: 0;
@@ -41,6 +38,13 @@
             white-space: nowrap;
             user-select: none;
         }
+        .following-text {
+            position: absolute;
+            color: lime; /* Text color */
+            font-size: 1.5em;
+            font-weight: bold;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -48,13 +52,16 @@
     <img src="https://cdn.wallpapersafari.com/78/80/huT4ji.png" class="bonzi" id="bonzi">
     <audio id="bounceSound" src="jump-sound.mp3" preload="auto"></audio>
 
+    <div id="followerText" class="following-text">I am not spyware</div> <!-- Follower text -->
+
     <script>
         const bonzi = document.getElementById('bonzi');
+        const followerText = document.getElementById('followerText');
         const bounceSound = document.getElementById('bounceSound');
-        const speed = 1; // Adjust Bonzi's speed of movement
+        const speed = 3; // Increase speed of Bonzi
         let bonziX = Math.random() * (window.innerWidth - bonzi.width);
         let bonziY = Math.random() * (window.innerHeight - bonzi.height);
-        const titles = []; // Store title elements
+        const titles = []; // Array for titles
 
         function moveBonzi() {
             let closestTitle = null;
@@ -67,7 +74,6 @@
                 const titleX = rect.left + rect.width / 2;
                 const titleY = rect.top + rect.height / 2;
 
-                // Calculate distance to Bonzi Buddy
                 const distance = Math.sqrt((titleX - (bonziX + bonzi.width / 2)) ** 2 + 
                                             (titleY - (bonziY + bonzi.height / 2)) ** 2);
                 if (distance < closestDistance) {
@@ -82,7 +88,6 @@
                 const titleX = rect.left + rect.width / 2;
                 const titleY = rect.top + rect.height / 2;
 
-                // Move Bonzi toward the title
                 const angle = Math.atan2(titleY - (bonziY + bonzi.height / 2), titleX - (bonziX + bonzi.width / 2));
                 bonziX += Math.cos(angle) * speed;
                 bonziY += Math.sin(angle) * speed;
@@ -99,7 +104,11 @@
             bonzi.style.left = bonziX + 'px';
             bonzi.style.top = bonziY + 'px';
 
-            requestAnimationFrame(moveBonzi); // Keep moving
+            // Update follower text position
+            followerText.style.left = (bonziX + bonzi.width / 2 - 60) + 'px'; // Center the text horizontally
+            followerText.style.top = (bonziY + bonzi.height + 10) + 'px'; // Position below Bonzi
+
+            requestAnimationFrame(moveBonzi); // Continue moving
         }
 
         function createTitle() {
