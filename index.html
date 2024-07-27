@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compooter Wirus</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://example.com/favicon.png"> <!-- Replace with your favicon link -->
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Compooter Wirus" />
+    <meta property="og:description" content="A fun interactive experience!" />
+    <meta property="og:image" content="https://cdn.wallpapersafari.com/78/80/huT4ji.png" /> <!-- Open Graph image -->
+    <meta property="og:url" content="https://yourwebsite.com" /> <!-- Replace with your website URL -->
+    <meta property="og:type" content="website" /> <!-- Type of content -->
+
     <style>
         body {
             margin: 0;
@@ -11,10 +22,10 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
-            position: relative; /* To position the new titles */
+            position: relative;
         }
         .bonzi {
-            width: 100px;
+            width: 100px; /* Adjust as needed */
             height: auto;
             position: absolute;
             pointer-events: none;
@@ -34,14 +45,16 @@
             font-weight: bold;
             font-size: 2em;
             position: absolute;
-            white-space: nowrap; /* Prevents line breaks */
+            white-space: nowrap;
+            transition: transform 0.3s;
+            user-select: none;
         }
     </style>
 </head>
 <body>
     <h1 id="mainTitle">compooter wirus</h1>
 
-    <img src="https://cdn.wallpapersafari.com/78/80/huT4ji.png" class="bonzi" id="bonzi">
+    <img src="https://cdn.wallpapersafari.com/78/80/huT4ji.png" class="bonzi" id="bonzi"> <!-- Bonzi Buddy image -->
 
     <audio id="bounceSound" src="jump-sound.mp3" preload="auto"></audio>
 
@@ -82,6 +95,7 @@
 
                     // Check for collision
                     if (closestDistance < bonzi.width / 2 + 20) { // Approximate collision radius
+                        bounceSound.play(); // Play the sound on collision
                         closestTitle.remove(); // Remove title on collision
                     }
                 }
