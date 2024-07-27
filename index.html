@@ -8,6 +8,13 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://example.com/favicon.png"> <!-- Replace with your favicon link -->
 
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Bonzi Gorilla" />
+    <meta property="og:description" content="I am Not Chinese Spyware!" />
+    <meta property="og:image" content="https://cdn.wallpapersafari.com/78/80/huT4ji.png" /> <!-- Open Graph image -->
+    <meta property="og:url" content="https://yourwebsite.com" /> <!-- Replace with your website URL -->
+    <meta property="og:type" content="website" /> <!-- Type of content -->
+
     <style>
         body {
             margin: 0;
@@ -18,7 +25,7 @@
             position: relative;
         }
         .bonzi {
-            width: 100px; /* Bonzi Buddy size */
+            width: 100px; /* Adjust as needed */
             height: auto;
             position: absolute;
             pointer-events: none;
@@ -39,81 +46,83 @@
             font-size: 2em;
             position: absolute;
             white-space: nowrap;
+            transition: transform 0.3s;
             user-select: none;
         }
     </style>
 </head>
 <body>
-    <h1>Bonzi Gorilla</h1>
-    <img src="https://cdn.wallpapersafari.com/78/80/huT4ji.png" class="bonzi" id="bonzi">
+    <h1 id="mainTitle">Bonzi Gorilla</h1>
+
+    <img src="https://cdn.wallpapersafari.com/78/80/huT4ji.png" class="bonzi" id="bonzi"> <!-- Bonzi Buddy image -->
+
     <audio id="bounceSound" src="jump-sound.mp3" preload="auto"></audio>
 
     <script>
         const bonzi = document.getElementById('bonzi');
         const bounceSound = document.getElementById('bounceSound');
-        const speed = 1; // Adjust Bonzi's speed of movement
-        let bonziX = Math.random() * (window.innerWidth - bonzi.width);
-        let bonziY = Math.random() * (window.innerHeight - bonzi.height);
-        const titles = []; // Store title elements
+        const mainTitle = document.getElementById('mainTitle');
+        const speed = 2; // Speed of Bonzi Buddy
 
+        let x = Math.random() * (window.innerWidth - bonzi.width);
+        let y = Math.random() * (window.innerHeight - bonzi.height);
+
+        // Function to move Bonzi toward closest title
         function moveBonzi() {
-            let closestTitle = null;
-            let closestDistance = Infinity;
+            const titles = document.querySelectorAll('.title');
+            if (titles.length > 0) {
+                let closestTitle = null;
+                let closestDistance = Infinity;
 
-            // Find the closest title
-            for (let i = 0; i < titles.length; i++) {
-                const title = titles[i];
-                const rect = title.getBoundingClientRect();
-                const titleX = rect.left + rect.width / 2;
-                const titleY = rect.top + rect.height / 2;
+                // Find the closest title
+                titles.forEach(title => {
+                    const rect = title.getBoundingClientRect();
+                    const titleX = rect.left + rect.width / 2; // Center X of title
+                    const titleY = rect.top + rect.height / 2; // Center Y of title
 
-                // Calculate distance to Bonzi Buddy
-                const distance = Math.sqrt((titleX - (bonziX + bonzi.width / 2)) ** 2 + 
-                                            (titleY - (bonziY + bonzi.height / 2)) ** 2);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestTitle = title;
+                    const distance = Math.sqrt((titleX - (x + bonzi.width / 2)) ** 2 + (titleY - (y + bonzi.height / 2)) ** 2);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestTitle = title;
+                    }
+                });
+
+                // Move Bonzi toward the closest title
+                if (closestTitle) {
+                    const angle = Math.atan2((closestTitle.offsetTop + 20) - y, (closestTitle.offsetLeft + 20) - x); // Adjust for Bonzi's center
+                    x += Math.cos(angle) * speed;
+                    y += Math.sin(angle) * speed;
+
+                    // Check for collision
+                    if (closestDistance < bonzi.width / 2 + 20) { // Approximate collision radius
+                        bounceSound.play(); // Play the sound on collision
+                        closestTitle.remove(); // Remove title on collision
+                    }
                 }
             }
 
-            // Move Bonzi toward the closest title if it exists
-            if (closestTitle) {
-                const rect = closestTitle.getBoundingClientRect();
-                const titleX = rect.left + rect.width / 2;
-                const titleY = rect.top + rect.height / 2;
+            bonzi.style.left = x + 'px';
+            bonzi.style.top = y + 'px';
 
-                // Move Bonzi toward the title
-                const angle = Math.atan2(titleY - (bonziY + bonzi.height / 2), titleX - (bonziX + bonzi.width / 2));
-                bonziX += Math.cos(angle) * speed;
-                bonziY += Math.sin(angle) * speed;
-
-                // Check for collision
-                if (closestDistance < bonzi.width / 2 + 20) { // Collision threshold
-                    bounceSound.play();
-                    closestTitle.remove();
-                    titles.splice(titles.indexOf(closestTitle), 1); // Remove title from the array
-                }
-            }
-
-            // Update Bonzi position
-            bonzi.style.left = bonziX + 'px';
-            bonzi.style.top = bonziY + 'px';
-
-            requestAnimationFrame(moveBonzi); // Keep moving
+            requestAnimationFrame(moveBonzi);
         }
 
+        // Function to create new titles
         function createTitle() {
             const newTitle = document.createElement('div');
             newTitle.className = 'title';
-            newTitle.textContent = "COMPOOTER VIRUS";
-            newTitle.style.top = Math.random() * (window.innerHeight - 50) + 'px';
-            newTitle.style.left = Math.random() * (window.innerWidth - 200) + 'px';
+            newTitle.textContent = "Bonzi Gorilla"; // Updated title to Bonzi Gorilla
+            const topPosition = Math.random() * window.innerHeight; // Random vertical position
+            const leftPosition = Math.random() * window.innerWidth; // Random horizontal position
+            newTitle.style.top = topPosition + 'px';
+            newTitle.style.left = leftPosition + 'px';
             document.body.appendChild(newTitle);
-            titles.push(newTitle); // Add the new title to the titles array
         }
 
-        setInterval(createTitle, 1000); // Create new titles every second
-        moveBonzi(); // Start moving Bonzi
+        // Call createTitle every 1000 milliseconds (1 second)
+        setInterval(createTitle, 1000);
+
+        moveBonzi();
     </script>
 </body>
 </html>
