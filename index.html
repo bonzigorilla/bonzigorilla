@@ -61,21 +61,20 @@
     <script>
         const bonzi = document.getElementById('bonzi');
         const bounceSound = document.getElementById('bounceSound');
-        const mainTitle = document.getElementById('mainTitle');
         const speed = 2; // Speed of Bonzi Buddy
 
         let x = Math.random() * (window.innerWidth - bonzi.width);
         let y = Math.random() * (window.innerHeight - bonzi.height);
+        const titles = []; // Array to store title elements
 
         // Function to move Bonzi toward closest title
         function moveBonzi() {
-            const titles = document.querySelectorAll('.title');
             if (titles.length > 0) {
                 let closestTitle = null;
                 let closestDistance = Infinity;
 
                 // Find the closest title
-                titles.forEach(title => {
+                titles.forEach((title, index) => {
                     const rect = title.getBoundingClientRect();
                     const titleX = rect.left + rect.width / 2; // Center X of title
                     const titleY = rect.top + rect.height / 2; // Center Y of title
@@ -83,20 +82,21 @@
                     const distance = Math.sqrt((titleX - (x + bonzi.width / 2)) ** 2 + (titleY - (y + bonzi.height / 2)) ** 2);
                     if (distance < closestDistance) {
                         closestDistance = distance;
-                        closestTitle = title;
+                        closestTitle = { title, index }; // Store both title and index
                     }
                 });
 
                 // Move Bonzi toward the closest title
                 if (closestTitle) {
-                    const angle = Math.atan2((closestTitle.offsetTop + 20) - y, (closestTitle.offsetLeft + 20) - x); // Adjust for Bonzi's center
+                    const angle = Math.atan2((closestTitle.title.offsetTop + 20) - y, (closestTitle.title.offsetLeft + 20) - x); // Adjust for Bonzi's center
                     x += Math.cos(angle) * speed;
                     y += Math.sin(angle) * speed;
 
                     // Check for collision
                     if (closestDistance < bonzi.width / 2 + 20) { // Approximate collision radius
                         bounceSound.play(); // Play the sound on collision
-                        closestTitle.remove(); // Remove title on collision
+                        closestTitle.title.remove(); // Remove title on collision
+                        titles.splice(closestTitle.index, 1); // Remove from the array to avoid issues
                     }
                 }
             }
@@ -111,12 +111,13 @@
         function createTitle() {
             const newTitle = document.createElement('div');
             newTitle.className = 'title';
-            newTitle.textContent = "COMPOOTER VIRUS"; // Updated title to COMPOOTER VIRUS
-            const topPosition = Math.random() * window.innerHeight; // Random vertical position
-            const leftPosition = Math.random() * window.innerWidth; // Random horizontal position
+            newTitle.textContent = "COMPOOTER VIRUS"; // Title chasing text
+            const topPosition = Math.random() * (window.innerHeight - 50); // Random vertical position
+            const leftPosition = Math.random() * (window.innerWidth - 200); // Random horizontal position
             newTitle.style.top = topPosition + 'px';
             newTitle.style.left = leftPosition + 'px';
             document.body.appendChild(newTitle);
+            titles.push(newTitle); // Add new title to the titles array
         }
 
         // Call createTitle every 1000 milliseconds (1 second)
